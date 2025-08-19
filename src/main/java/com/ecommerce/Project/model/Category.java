@@ -1,5 +1,8 @@
 package com.ecommerce.Project.model;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({ "categoryId", "categoryName" })
 public class Category {
     private Long categoryId;
     private String categoryName;
