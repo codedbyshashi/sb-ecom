@@ -1,9 +1,13 @@
 package com.ecommerce.Project.model;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @JsonPropertyOrder({ "categoryId", "categoryName" })
+@Entity(name = "categories")
 public class Category {
+    @Id
     private Long categoryId;
     private String categoryName;
 
