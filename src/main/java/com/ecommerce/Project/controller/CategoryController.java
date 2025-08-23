@@ -1,6 +1,5 @@
 package com.ecommerce.Project.controller;
 
-import com.ecommerce.Project.model.Category;
 import com.ecommerce.Project.payload.CategoryDto;
 import com.ecommerce.Project.payload.CategoryResponse;
 import com.ecommerce.Project.service.CategoryService;
@@ -9,16 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
+    @GetMapping("/echo")
+    public ResponseEntity<String> echoMessage(@RequestParam(name = "message",required = false) String message){
+        return new ResponseEntity<>("Echoed message: "+message,HttpStatus.OK);
+    }
 
 
 
