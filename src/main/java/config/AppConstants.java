@@ -1,4 +1,4 @@
-package com.ecommerce.Project.config;
+package config;
 
 public class AppConstants {
     public static final String PAGE_NUMBER = "0";

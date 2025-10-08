@@ -1,4 +1,4 @@
-package com.ecommerce.Project.model;
+package model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,4 +1,4 @@
-package com.ecommerce.Project.model;
+package model;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
