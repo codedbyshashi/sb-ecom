@@ -42,8 +42,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    public User(Long userId, String username, String email, String password) {
-        this.userId = userId;
+    public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -67,7 +66,8 @@ public class User {
     private List<Address> addresses = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "user",cascade = {CascadeType.PERSIST,CascadeType.MERGE},
+    @OneToMany(mappedBy = "user",
+            cascade = {CascadeType.PERSIST,CascadeType.MERGE},
                orphanRemoval = true)
     private Set<Product> products;
 
