@@ -1,9 +1,16 @@
 package com.ecommerce.Project.controller;
 
-import com.ecommerce.Project.security.Request.LoginRequest;
+import com.ecommerce.Project.model.AppRole;
+import com.ecommerce.Project.model.Role;
+import com.ecommerce.Project.model.User;
+import com.ecommerce.Project.repositories.UserRepository;
+import com.ecommerce.Project.security.Response.MessageResponse;
+import com.ecommerce.Project.security.request.LoginRequest;
+import com.ecommerce.Project.security.request.SignUpRequest;
 import com.ecommerce.Project.security.Response.UserInfoResponse;
 import com.ecommerce.Project.security.jwt.JwtUtils;
 import com.ecommerce.Project.security.services.UserDetailsImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +19,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.awt.desktop.AppReopenedEvent;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,6 +36,15 @@ public class AuthController {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest){
@@ -58,5 +74,57 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest){
+        if(userRepository.existsByUsername(signUpRequest.getUsername())){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
+        }
+
+        if(userRepository.existsByEmail(signUpRequest.getEmail())){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already taken!"));
+        }
+        User user = new User(
+                signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword())
+        );
+
+        Set<String> strRoles = signUpRequest.getRole();
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null) {
+            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                    .orElseThrow(()-> new RuntimeException("Error: Role is not Found"));
+            roles.add(userRole);
+        }
+        else {
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "admin":
+                        Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+                                .orElseThrow(()-> new RuntimeException("Error: Role is not Found"));
+                        roles.add(adminRole);
+                        break;
+                    case "seller":
+                        Role sellerRole = roleRepository.findByRoleName(AppRole.ROLE_SELLER)
+                                .orElseThrow(()-> new RuntimeException("Error: Role is not Found"));
+                        roles.add(sellerRole);
+                        break;
+                    default:
+                        Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                                .orElseThrow(()-> new RuntimeException("Error: Role is not Found"));
+                        roles.add(userRole);
+                }
+            });
+        }
+        user.setRoles(roles);
+        userRepository.save(user);
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }
