@@ -3,6 +3,7 @@ package com.ecommerce.Project.controller;
 import com.ecommerce.Project.model.AppRole;
 import com.ecommerce.Project.model.Role;
 import com.ecommerce.Project.model.User;
+import com.ecommerce.Project.repositories.RoleRepository;
 import com.ecommerce.Project.repositories.UserRepository;
 import com.ecommerce.Project.security.Response.MessageResponse;
 import com.ecommerce.Project.security.request.LoginRequest;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.desktop.AppReopenedEvent;
@@ -29,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -69,8 +72,12 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item->item.getAuthority())
                 .collect(Collectors.toList());
-        UserInfoResponse response = new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),
-                jwtToken,roles);
+        UserInfoResponse response = new UserInfoResponse(
+                userDetails.getId(),   // id
+                jwtToken,              // JWT token
+                userDetails.getUsername(), // username
+                roles                  // roles
+        );
 
         return ResponseEntity.ok(response);
 
