@@ -73,7 +73,8 @@ public class AuthController {
                 .collect(Collectors.toList());
         UserInfoResponse response = new UserInfoResponse(
                 userDetails.getId(),
-                // id// JWT token
+                // id
+                jwtCookie.toString(),// JWT token
                 userDetails.getUsername(), // username
                 roles                  // roles
         );
@@ -153,7 +154,8 @@ public class AuthController {
                 .map(item->item.getAuthority())
                 .collect(Collectors.toList());
         UserInfoResponse response = new UserInfoResponse(
-                userDetails.getId(),   // id// JWT token
+                userDetails.getId(),   // id
+                // JWT token
                 userDetails.getUsername(), // username
                 roles                  // roles
         );
