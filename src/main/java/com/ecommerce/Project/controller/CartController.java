@@ -54,4 +54,12 @@ public class CartController {
      return new ResponseEntity<CartDto>(cartDto,HttpStatus.OK);
 
     }
+
+    @DeleteMapping("/carts/{cartId}/product/{productId}")
+    public ResponseEntity<String> deleteProductFromCart(@PathVariable Long cartId,
+                                                        @PathVariable Long productId){
+    String status = cartService.deleteProductFromCart(cartId,productId);
+    return new ResponseEntity<String>(status,HttpStatus.OK);
+
+    }
 }
